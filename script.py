@@ -1,21 +1,32 @@
-import streamlit as st
 from bs4 import BeautifulSoup
 
-# Streamlit text area to input HTML code
-input_text = st.text_area("Paste your HTML code here...", height=200)
-
-# Function to process HTML when the button is clicked
-def process_html():
-    html_content = input_text
+def remove_span_tags(html_content):
     soup = BeautifulSoup(html_content, "html.parser")
 
-    # Remove <span> tags
+    # Remove <span> tags but keep their content
     for span in soup.find_all("span"):
         span.unwrap()
 
-    # Display updated HTML
-    st.text_area("Updated HTML will appear here...", value=str(soup.prettify()), height=200)
+    return soup.prettify()
 
-# Button to trigger the processing
-if st.button("Remove <span> Tags"):
-    process_html()
+def main():
+    print("Paste your HTML code below. Press Enter, then Ctrl+D (or Ctrl+Z on Windows) to finish:")
+    
+    # Read multiline input from the user
+    html_content = ""
+    while True:
+        try:
+            line = input()
+            html_content += line + "\n"
+        except EOFError:  # End input with Ctrl+D (Linux/macOS) or Ctrl+Z (Windows)
+            break
+
+    # Process HTML
+    updated_html = remove_span_tags(html_content)
+
+    # Output result
+    print("\nUpdated HTML:\n")
+    print(updated_html)
+
+if __name__ == "__main__":
+    main()
